@@ -1,7 +1,5 @@
-package com.example.myproject.login.service;
+package com.example.myproject.config.security;
 
-
-import com.example.myproject.login.dao.LoginDao;
 import com.example.myproject.user.dto.UserDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,20 +14,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LoginServiceImpl {
+public class SecurityService {
+//public class SecurityService implements UserDetailsService {
 
-    private final LoginDao loginDao;
-
-//    @Override
-//    public UserDto registerUser(UserDto userDto) {
-//        return loginDao.registerUser(userDto);
-//    }
+    private final SecurityDao securityDao;
 
 //    @Override
 //    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //        String userName, password;
 //        List<GrantedAuthority> authorities;
-//        List<UserDto> users = loginDao.findUserByEmail(email);
+//        List<UserDto> users = securityDao.findUserByEmail(email);
 //        if (users.size() == 0) {
 //            throw new UsernameNotFoundException("User details not found for the user : " + email);
 //        } else{

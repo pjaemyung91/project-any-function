@@ -1,13 +1,10 @@
-package com.example.myproject.login.dao;
+package com.example.myproject.user.dao;
 
 import com.example.myproject.user.dto.UserDto;
-import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface LoginDao {
-
-    List<UserDto> findUserByEmail(String email);
+public interface UserDao {
 
     UserDto registerUser(UserDto userDto);
 }

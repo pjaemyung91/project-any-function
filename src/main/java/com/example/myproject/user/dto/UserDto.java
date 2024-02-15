@@ -1,16 +1,16 @@
 package com.example.myproject.user.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
 
-    private String id;
-    private String password;
-    private String username;
+    private int id;
+    private String email;
+    private String pwd;
     private String role;
 }

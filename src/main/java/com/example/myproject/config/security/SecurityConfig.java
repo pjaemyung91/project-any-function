@@ -1,5 +1,6 @@
 package com.example.myproject.config.security;
 
+import javax.sql.DataSource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 //@EnableWebSecurity
@@ -22,10 +28,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((requests) -> requests
-//            .requestMatchers(PathRequest.toH2Console()).permitAll()
+            .requestMatchers(PathRequest.toH2Console()).permitAll()
+            .requestMatchers("/register").permitAll()
             .requestMatchers("/", "/main").authenticated())
-//            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
-//            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
+            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
 
@@ -51,20 +58,40 @@ public class SecurityConfig {
 //            .requestMatchers(PathRequest.toH2Console());
 //    }
 
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailService() {
+//        UserDetails admin = User.withDefaultPasswordEncoder()
+//            .username("admin")
+//            .password("12345")
+//            .authorities("admin")
+//            .build();
+//
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//            .username("user")
+//            .password("12345")
+//            .authorities("read")
+//            .build();
+//
+//        return new InMemoryUserDetailsManager(admin, user);
+//    }
+
+//    @Bean
+//    public UserDetailsService userDetailsService(DataSource dataSource) {
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
+
+    /**
+     * 비밀번호 인코딩 관련 빈 설정은 매우 중요
+     * 스프링 시큐리티에게 비밀번호 암호화 관련 정보를 주는 것으로
+     * 인증 시 어떠한 방법으로 비밀번호를 확인할 지 알려주는 것임
+     */
     @Bean
-    public InMemoryUserDetailsManager userDetailService() {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-            .username("admin")
-            .password("12345")
-            .authorities("admin")
-            .build();
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 
-        UserDetails user = User.withDefaultPasswordEncoder()
-            .username("user")
-            .password("12345")
-            .authorities("read")
-            .build();
-
-        return new InMemoryUserDetailsManager(admin, user);
+    @Bean
+    public BCryptPasswordEncoder bcryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
