@@ -28,11 +28,12 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((requests) -> requests
-            .requestMatchers(PathRequest.toH2Console()).permitAll()
+//            .requestMatchers(PathRequest.toH2Console()).permitAll()
             .requestMatchers("/register").permitAll()
-            .requestMatchers("/", "/main").authenticated())
-            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
-            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+            .requestMatchers("/", "/main", "/users").authenticated())
+            .csrf((csrf) -> csrf.disable())
+//            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
+//            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
             .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
 

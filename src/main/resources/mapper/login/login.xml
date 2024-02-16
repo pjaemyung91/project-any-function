@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.myproject.config.security.SecurityDao">
-  <select id="findUserByEmail" parameterType="String" resultType="com.example.myproject.user.dto.UserDto">
+  <select id="findUserByEmail" parameterType="String" resultType="com.example.myproject.customer.dto.CustomerDto">
     SELECT
-        id as id,
+        customer_id as id,
+        `name` as name,
         email as email,
+        mobile_number as mobileNumber,
         pwd as pwd,
         `role` as role
     FROM

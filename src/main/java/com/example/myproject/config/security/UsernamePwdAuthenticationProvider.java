@@ -1,6 +1,6 @@
 package com.example.myproject.config.security;
 
-import com.example.myproject.user.dto.UserDto;
+import com.example.myproject.customer.dto.CustomerDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +32,7 @@ public class UsernamePwdAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        List<UserDto> users = securityDao.findUserByEmail(username);
+        List<CustomerDto> users = securityDao.findUserByEmail(username);
         if (users.size() > 0) {
             if(bCryptPasswordEncoder.matches(password, users.get(0).getPwd())) {
                 List<GrantedAuthority> authorities = new ArrayList<>();

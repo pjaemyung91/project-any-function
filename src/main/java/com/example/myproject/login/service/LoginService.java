@@ -1,8 +1,8 @@
 package com.example.myproject.login.service;
 
-import com.example.myproject.user.dto.UserDto;
+import com.example.myproject.customer.dto.CustomerDto;
 
 public interface LoginService {
 
-    UserDto registerUser(UserDto userDto);
+    CustomerDto registerUser(CustomerDto customerDto);
 }

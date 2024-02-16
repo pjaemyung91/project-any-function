@@ -1,4 +1,4 @@
-package com.example.myproject.user.dto;
+package com.example.myproject.customer.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,10 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class CustomerDto {
 
-    private int id;
+    private int customerId;
+    private String name;
     private String email;
+    private String mobileNumber;
     private String pwd;
     private String role;
+    private String createDt;
 }

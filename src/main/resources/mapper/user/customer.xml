@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.myproject.customer.dao.CustomerDao">
+
+  <insert id="registerCustomer" parameterType="com.example.myproject.customer.dto.CustomerDto" useGeneratedKeys="true" keyProperty="customerId">
+    INSERT INTO customer (`name`, email, mobile_number, pwd, `role`, create_dt)
+    VALUES (#{name}, #{email}, #{mobileNumber}, #{pwd}, #{role}, #{createDt})
+  </insert>
+
+  <select id="findCustomerById" parameterType="int" resultType="com.example.myproject.customer.dto.CustomerDto">
+    SELECT
+        customer_id as customerId,
+        `name` as name,
+        email as email,
+        mobile_number as mobileNumber,
+        pwd as pwd,
+        `role` as role,
+        create_dt as createDt
+    FROM
+        customer
+    WHERE
+        customer_id = #{customerId}
+  </select>
+</mapper>
