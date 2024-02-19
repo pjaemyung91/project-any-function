@@ -1,4 +1,4 @@
-package com.example.myproject.config;
+package com.example.myproject.common.config;
 
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;

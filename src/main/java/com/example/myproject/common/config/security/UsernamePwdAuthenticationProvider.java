@@ -1,8 +1,10 @@
-package com.example.myproject.config.security;
+package com.example.myproject.common.config.security;
 
+import com.example.myproject.customer.dto.Authority;
 import com.example.myproject.customer.dto.CustomerDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -35,15 +38,24 @@ public class UsernamePwdAuthenticationProvider implements AuthenticationProvider
         List<CustomerDto> users = securityDao.findUserByEmail(username);
         if (users.size() > 0) {
             if(bCryptPasswordEncoder.matches(password, users.get(0).getPwd())) {
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(users.get(0).getRole()));
-                return new UsernamePasswordAuthenticationToken(username, password, authorities);
+//                List<GrantedAuthority> authorities = new ArrayList<>();
+//                authorities.add(new SimpleGrantedAuthority(users.get(0).getRole()));
+                return new UsernamePasswordAuthenticationToken(username, password, getGrantedAuthorities(users.get(0).getCustomerId()));
             }else {
                 throw new BadCredentialsException("Invalid password");
             }
         }else {
             throw new BadCredentialsException("No user registered with this datails!");
         }
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities(int customerId) {
+        List<Authority> authorities = securityDao.findAuthoritiesByCustomerId(customerId);
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for (Authority authority : authorities) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+        return grantedAuthorities;
     }
 
     @Override

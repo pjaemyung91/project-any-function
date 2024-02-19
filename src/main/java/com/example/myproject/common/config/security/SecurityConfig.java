@@ -1,7 +1,11 @@
-package com.example.myproject.config.security;
+package com.example.myproject.common.config.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.example.myproject.common.filter.security.AuthoritiesLoggingAfterFilter;
+import com.example.myproject.common.filter.security.AuthoritiesLoggingAtFilter;
+import com.example.myproject.common.filter.security.CsrfCookieFilter;
+import com.example.myproject.common.filter.security.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,23 +29,39 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-//@EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * spring boot 3.x.x와 spring security 6.x에서는 and() 메소드가 deprecated
+     *
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
 
-        http.cors(withDefaults())
-            .csrf((csrf) -> csrf.disable())
+        http.securityContext((context) -> context.requireExplicitSave(false))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+            .cors((cors) -> cors.configurationSource(myCorsConfigurationSource()))
+            .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/register")
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
+            .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
             .authorizeHttpRequests((requests) -> requests
 //            .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/register").permitAll()
-                .requestMatchers("/", "/main", "/users").authenticated())
+//                .requestMatchers("/", "/main", "/users").hasAnyAuthority("VIEWACCOUNT", "VIEWCARDS")) // 권한으로 접근제어
+                .requestMatchers("/", "/main", "/users").hasAnyRole("ADMIN", "USER")) // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
 //            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
 //            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
             .formLogin(withDefaults())
@@ -106,7 +127,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource myCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
         configuration.setAllowedMethods(Collections.singletonList("*"));

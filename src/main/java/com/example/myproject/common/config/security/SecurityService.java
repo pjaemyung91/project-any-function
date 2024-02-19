@@ -1,4 +1,4 @@
-package com.example.myproject.config.security;
+package com.example.myproject.common.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
 package com.example.myproject.customer.dto;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,5 @@ public class CustomerDto {
     private String pwd;
     private String role;
     private String createDt;
+    private Set<Authority> authorities;
 }
