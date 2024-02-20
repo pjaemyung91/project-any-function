@@ -5,6 +5,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import com.example.myproject.common.filter.security.AuthoritiesLoggingAfterFilter;
 import com.example.myproject.common.filter.security.AuthoritiesLoggingAtFilter;
 import com.example.myproject.common.filter.security.CsrfCookieFilter;
+import com.example.myproject.common.filter.security.JWTTokenGeneratorFilter;
+import com.example.myproject.common.filter.security.JWTTokenValidatorFilter;
 import com.example.myproject.common.filter.security.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -40,7 +42,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     /**
-     * spring boot 3.x.x와 spring security 6.x에서는 and() 메소드가 deprecated
+     * spring boot 3.x.x와 spring security 6.x에서는 and() 메소드가 deprecated -> lamda사용
+     *
      *
      */
     @Bean
@@ -48,24 +51,41 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
         requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
 
-        http.securityContext((context) -> context.requireExplicitSave(false))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-            .cors((cors) -> cors.configurationSource(myCorsConfigurationSource()))
+        http
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//            .securityContext((context) -> context.requireExplicitSave(false))
+//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+//            .cors((cors) -> cors.configurationSource(myCorsConfigurationSource()))
+            .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    config.setExposedHeaders(Arrays.asList("Authorization"));
+                    config.setMaxAge(3600L);
+                    return config;
+                }
+            }))
             .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/register")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
-            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-            .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+//            .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
+//            .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+            .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+            .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
             .authorizeHttpRequests((requests) -> requests
 //            .requestMatchers(PathRequest.toH2Console()).permitAll()
-                .requestMatchers("/register").permitAll()
 //                .requestMatchers("/", "/main", "/users").hasAnyAuthority("VIEWACCOUNT", "VIEWCARDS")) // 권한으로 접근제어
-                .requestMatchers("/", "/main", "/users").hasAnyRole("ADMIN", "USER")) // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
+                .requestMatchers("/", "/main", "/users").hasAnyRole("ADMIN", "USER")    // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
+                .requestMatchers("/register").permitAll())
 //            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
 //            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
-            .formLogin(withDefaults())
-            .httpBasic(withDefaults());
+            .formLogin(Customizer.withDefaults())
+            .httpBasic(Customizer.withDefaults());
 
         /**
          *  Configuration to deny all the requests
@@ -134,6 +154,7 @@ public class SecurityConfig {
 //        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
