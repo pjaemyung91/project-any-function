@@ -1,12 +1,20 @@
 package com.example.myproject.login.controller;
 
+import com.example.myproject.common.config.security.SecurityDao;
+import com.example.myproject.common.config.security.SecurityService;
+import com.example.myproject.customer.dto.CustomerDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
 
+    private final SecurityDao securityDao;
 //    private final LoginService loginServiceImpl;
 
 //    @PostMapping("/register")
@@ -28,4 +36,13 @@ public class LoginController {
 //        return response;
 //    }
 
+//    @RequestMapping("/user")
+//    public CustomerDto getUserDetailsAfterLogin(Authentication authentication) {
+//        List<CustomerDto> customers = securityDao.findUserByEmail(authentication.getName());
+//        if (customers.size() > 0) {
+//            return customers.get(0);
+//        } else {
+//            return null;
+//        }
+//    }
 }

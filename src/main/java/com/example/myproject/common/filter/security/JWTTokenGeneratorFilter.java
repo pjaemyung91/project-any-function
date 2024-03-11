@@ -15,21 +15,24 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.crypto.SecretKey;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Slf4j
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null) {
+        if (null != authentication) {
             SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
-            String jwt = Jwts.builder().setIssuer("Eazy Bank").setSubject("JWT Token")
+            String jwt = Jwts.builder().setIssuer("Jaemyung Park").setSubject("JWT Token")
                 .claim("username", authentication.getName())
                 .claim("authorities", populateAuthorities(authentication.getAuthorities()))
                 .setIssuedAt(new Date())
@@ -43,7 +46,8 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getServletPath().equals("/user");
+//        return !request.getServletPath().equals("/user");
+        return !request.getServletPath().equals("/vue-test/experiences");
     }
 
     private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {

@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,8 +44,6 @@ public class SecurityConfig {
 
     /**
      * spring boot 3.x.x와 spring security 6.x에서는 and() 메소드가 deprecated -> lamda사용
-     *
-     *
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,27 +59,31 @@ public class SecurityConfig {
                 @Override
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
+//                    config.setAllowedOriginPatterns(Arrays.asList("*"));
                     config.setAllowedMethods(Collections.singletonList("*"));
                     config.setAllowCredentials(true);
                     config.setAllowedHeaders(Collections.singletonList("*"));
-                    config.setExposedHeaders(Arrays.asList("Authorization"));
+                    config.setExposedHeaders(Arrays.asList("Authorization"));   // jwt 관련 설정
                     config.setMaxAge(3600L);
                     return config;
                 }
             }))
-            .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/register")
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-            .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .csrf(csrf -> csrf.disable())
+//            .csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/register")
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//            .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
 //            .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
-            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
+//            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
 //            .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
             .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
             .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
             .authorizeHttpRequests((requests) -> requests
 //            .requestMatchers(PathRequest.toH2Console()).permitAll()
 //                .requestMatchers("/", "/main", "/users").hasAnyAuthority("VIEWACCOUNT", "VIEWCARDS")) // 권한으로 접근제어
-                .requestMatchers("/", "/main", "/users").hasAnyRole("ADMIN", "USER")    // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
+                .requestMatchers("/", "/main").hasAnyRole("ADMIN", "USER")    // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
+//                .requestMatchers("/", "/main", "/users").authenticated()
+                .requestMatchers("/user", "/vue-test/experiences").authenticated()
                 .requestMatchers("/register").permitAll())
 //            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
 //            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
@@ -149,7 +152,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource myCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Collections.singletonList("*"));
 //        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowCredentials(true);
