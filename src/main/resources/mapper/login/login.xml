@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.myproject.common.config.security.SecurityDao">
-  <select id="findUserByEmail" parameterType="String" resultType="com.example.myproject.customer.dto.CustomerDto">
+  <select id="findUserByUsername" parameterType="String" resultType="com.example.myproject.customer.dto.CustomerDto">
     SELECT
         customer_id as customerId,
         `name` as name,
@@ -12,7 +12,7 @@
     FROM
         customer
     WHERE
-        email = #{email}
+        name = #{name}
   </select>
 
   <select id="findAuthoritiesByCustomerId" parameterType="int" resultType="com.example.myproject.customer.dto.Authority">

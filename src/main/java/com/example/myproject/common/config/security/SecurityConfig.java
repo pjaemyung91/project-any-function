@@ -83,7 +83,7 @@ public class SecurityConfig {
 //                .requestMatchers("/", "/main", "/users").hasAnyAuthority("VIEWACCOUNT", "VIEWCARDS")) // 권한으로 접근제어
                 .requestMatchers("/", "/main").hasAnyRole("ADMIN", "USER")    // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
 //                .requestMatchers("/", "/main", "/users").authenticated()
-                .requestMatchers("/user", "/vue-test/experiences").authenticated()
+                .requestMatchers("/user", "/vue-test/**").authenticated()
                 .requestMatchers("/register").permitAll())
 //            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
 //            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))

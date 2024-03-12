@@ -35,7 +35,7 @@ public class UsernamePwdAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        List<CustomerDto> users = securityDao.findUserByEmail(username);
+        List<CustomerDto> users = securityDao.findUserByUsername(username);
         if (users.size() > 0) {
             if(bCryptPasswordEncoder.matches(password, users.get(0).getPwd())) {
 //                List<GrantedAuthority> authorities = new ArrayList<>();

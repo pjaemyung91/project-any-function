@@ -1,4 +1,4 @@
-package com.example.myproject.vuetest.exception;
+package com.example.myproject.vue.exception;
 
 import com.example.myproject.common.exception.AbstractException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,6 @@ public class CreateExperienceFailException extends AbstractException {
 
     @Override
     public HttpStatus getStatusCode() {
-        return null;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }

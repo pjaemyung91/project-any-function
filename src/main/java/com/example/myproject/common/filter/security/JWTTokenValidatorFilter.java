@@ -42,6 +42,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 String authorities = String.valueOf(claims.get("authorities"));
                 Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
                     AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch(Exception e) {
                 throw new BadCredentialsException("Invalid Token received");
             }
@@ -52,6 +53,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
 //        return request.getServletPath().equals("/user");
-        return request.getServletPath().equals("/vue-test/experiences");
+        return request.getMethod().equals("POST") && request.getServletPath().equals("/vue-test/experiences");
     }
 }

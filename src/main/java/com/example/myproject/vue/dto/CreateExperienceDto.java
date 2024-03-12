@@ -1,4 +1,4 @@
-package com.example.myproject.vuetest.dto;
+package com.example.myproject.vue.dto;
 
 import lombok.Data;
 import lombok.ToString;
@@ -7,6 +7,7 @@ import lombok.ToString;
 @ToString
 public class CreateExperienceDto {
 
+    private String username;
     private String name;
     private String rating;
 }

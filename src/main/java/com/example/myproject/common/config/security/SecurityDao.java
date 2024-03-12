@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SecurityDao {
 
-    List<CustomerDto> findUserByEmail(String email);
+    List<CustomerDto> findUserByUsername(String email);
 
     List<Authority> findAuthoritiesByCustomerId(int customerId);
 }

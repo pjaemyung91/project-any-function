@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.myproject.vue.dao.VueDao">
+
+  <insert id="createExperience" parameterType="com.example.myproject.vue.dto.CreateExperienceDto">
+    INSERT INTO experiences (`name`, `rating`, `create_dt`)
+    VALUES (#{name}, #{rating}, CURDATE())
+  </insert>
+
+  <select id="findAllExperiences" resultType="com.example.myproject.vue.dto.Experience">
+    SELECT
+        experience_id as id,
+        `name` as name,
+        rating as rating
+    FROM
+        experiences
+  </select>
+</mapper>

@@ -1,13 +1,17 @@
-package com.example.myproject.vuetest.service;
+package com.example.myproject.vue.service;
 
-import com.example.myproject.vuetest.dao.VueDao;
-import com.example.myproject.vuetest.dto.CreateExperienceDto;
-import com.example.myproject.vuetest.exception.CreateExperienceFailException;
+import com.example.myproject.vue.dao.VueDao;
+import com.example.myproject.vue.dto.CreateExperienceDto;
+import com.example.myproject.vue.dto.Experience;
+import com.example.myproject.vue.exception.CreateExperienceFailException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VueServiceImpl implements VueService{
 
     private final VueDao vueDao;
@@ -19,5 +23,10 @@ public class VueServiceImpl implements VueService{
         }catch(Exception e) {
             throw new CreateExperienceFailException("Fail to Create Experience");
         }
+    }
+
+    @Override
+    public List<Experience> findAllExperiences() {
+        return vueDao.findAllExperiences();
     }
 }

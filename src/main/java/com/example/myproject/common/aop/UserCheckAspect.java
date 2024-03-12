@@ -33,7 +33,6 @@ public class UserCheckAspect {
             Parameter[] parameters = signature.getMethod().getParameters();
 
             for(int i = 0; i < parameters.length; i++) {
-                log.info("is annotation = {}", (parameters[i].isAnnotationPresent(LoginId.class)));
                 if(parameters[i].isAnnotationPresent(LoginId.class)) {
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     args[i] = authentication.getPrincipal();
