@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.myproject.vue.dao.CoachDao">
+  <insert id="registerCoach" parameterType="com.example.myproject.vue.dto.CoachRegistrationDto">
+    INSERT INTO `coach` (coach_id, firstname, lastname, description, hourly_rate, areas, created_at)
+    VALUES (#{coachId}, #{firstName}, #{lastName}, #{description}, #{hourlyRate}, #{stringAreas}, NOW())
+  </insert>
+
+  <select id="findAllCoaches" resultType="com.example.myproject.vue.dto.Coach">
+    SELECT
+        coach_id as coachId,
+        firstname as firstname,
+        lastname as lastname,
+        description as description,
+        hourly_rate as hourlyRate,
+        areas as stringAreas
+    FROM
+        coach
+  </select>
+</mapper>

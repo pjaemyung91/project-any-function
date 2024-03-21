@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -53,6 +55,12 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
 //        return request.getServletPath().equals("/user");
-        return request.getMethod().equals("POST") && request.getServletPath().equals("/vue-test/experiences");
+        return (request.getMethod().equals("POST") && request.getServletPath().equals("/vue-test/experiences")) || checkAuthorized(request);
+    }
+
+    protected boolean checkAuthorized(HttpServletRequest request) {
+        String[] permitUrl = {"/coaches/list", "/coaches/coach", "/requests/request", "/requests/list"};
+        log.info("result = {}", Arrays.asList(permitUrl).contains(request.getServletPath()));
+        return Arrays.asList(permitUrl).contains(request.getServletPath());
     }
 }

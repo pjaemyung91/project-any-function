@@ -47,7 +47,6 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
 //        return !request.getServletPath().equals("/user");
-        log.info("method = {}", request.getMethod());
         return request.getMethod().equals("GET") && !request.getServletPath().equals("/vue-test/experiences");
     }
 

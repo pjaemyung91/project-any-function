@@ -84,7 +84,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/main").hasAnyRole("ADMIN", "USER")    // 역할로 접근 제어, 스프링 시큐리티가 자동으로 접두사 ROLE_을 붙임
 //                .requestMatchers("/", "/main", "/users").authenticated()
                 .requestMatchers("/user", "/vue-test/**").authenticated()
-                .requestMatchers("/register", "/coaches/**").permitAll())
+                .requestMatchers("/register", "/coaches/**", "/requests/**").permitAll())
 //            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
 //            .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
             .formLogin(Customizer.withDefaults())

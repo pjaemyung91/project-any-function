@@ -1,10 +1,12 @@
-package com.example.myproject.vue.service;
+package com.example.myproject.vue.dao;
 
 import com.example.myproject.vue.dto.Coach;
 import com.example.myproject.vue.dto.CoachRegistrationDto;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface CoachesService {
+@Mapper
+public interface CoachDao {
 
     void registerCoach(CoachRegistrationDto coachRegistrationDto);
 
